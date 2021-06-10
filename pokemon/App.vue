@@ -1,8 +1,18 @@
 <template>
-  <div class="card">
-    <div class="title">Title</div>
-    <div class="content">Content</div>
-    <div class="description">Description</div>
+  <div class="row">
+    <div class="card" v-for="p in pokemon" :key="p.id">
+      <div class="title">
+        {{ p.name }}
+      </div>
+      <div class="content">
+        <img :src="p.sprite" alt="" />
+      </div>
+      <div class="description">
+        <div v-for="type in p.types" :key="type">
+          {{ type }}
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -10,25 +20,28 @@
 const api = "https://pokeapi.co/api/v2/pokemon";
 const ids = [1, 4, 7];
 export default {
+  data() {
+    return {
+      pokemon: [],
+    };
+  },
+
+  // Lifecycle hook -> automatically fetch the data as soon as the website visited
+  // Use 'created' because we don't need to access the elements (instead of Mounted)
+  created() {
+    this.fetchData();
+  },
+
   methods: {
-    data() {
-      return {
-        pokemon: [],
-      };
-    },
-
-    // Lifecycle hook -> automatically fetch the data as soon as the website visited
-    // Use 'created' because we don't need to access the elements (instead of Mounted)
-    created() {
-      this.fetchData();
-    },
-
     // async await
     async fetchData() {
       const responses = await Promise.all(
         ids.map((id) => window.fetch(`${api}/${id}`))
       );
-      const json = await Promise.all(responses.map((data) => data.json())); //parsing API to json
+
+      //parsing API to json
+      const json = await Promise.all(responses.map((data) => data.json()));
+
       // getting spesifics data from api
       // note: 'datum' is singular from 'data' (plural)
       this.pokemon = json.map((datum) => ({
@@ -43,6 +56,15 @@ export default {
 </script>
 
 <style scoped>
+img {
+  width: 100%;
+}
+
+.row {
+  display: flex;
+  justify-content: center;
+}
+
 .card {
   border: 1px solid silver;
   border-radius: 8px;
