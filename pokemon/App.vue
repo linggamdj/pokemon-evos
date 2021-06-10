@@ -3,7 +3,6 @@
     <div class="title">Title</div>
     <div class="content">Content</div>
     <div class="description">Description</div>
-    <button @click="fetchData">Fetch</button>
   </div>
 </template>
 
@@ -17,6 +16,13 @@ export default {
         pokemon: [],
       };
     },
+
+    // Lifecycle hook -> automatically fetch the data as soon as the website visited
+    // Use 'created' because we don't need to access the elements (instead of Mounted)
+    created() {
+      this.fetchData();
+    },
+
     // async await
     async fetchData() {
       const responses = await Promise.all(
@@ -31,8 +37,6 @@ export default {
         sprite: datum.sprites.other["official-artwork"].front_default,
         types: datum.types.map((type) => type.type.name),
       }));
-
-      console.log(this.pokemon);
     },
   },
 };
