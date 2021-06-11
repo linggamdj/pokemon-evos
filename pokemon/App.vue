@@ -1,33 +1,41 @@
 <template>
   <div class="row">
-    <div class="card" v-for="p in pokemon" :key="p.id">
-      <div class="title">
-        {{ p.name }}
-      </div>
-      <div class="content">
-        <img :src="p.sprite" alt="" />
-      </div>
-      <div class="description">
-        <div v-for="type in p.types" :key="type">
+    <card v-for="pokemon in pokemons" :key="pokemon.id">
+      <template v-slot:title>
+        {{ pokemon.name }}
+      </template>
+
+      <template v-slot:content>
+        <img :src="pokemon.sprite" alt="" />
+      </template>
+
+      <template v-slot:description>
+        <div v-for="type in pokemon.types" :key="type">
           {{ type }}
         </div>
-      </div>
-    </div>
+      </template>
+    </card>
   </div>
 </template>
 
 <script>
+import Card from "./Card.vue";
+
 const api = "https://pokeapi.co/api/v2/pokemon";
 const ids = [1, 4, 7];
 export default {
+  components: {
+    Card,
+  },
+
   data() {
     return {
-      pokemon: [],
+      pokemons: [],
     };
   },
 
   // Lifecycle hook -> automatically fetch the data as soon as the website visited
-  // Use 'created' because we don't need to access the elements (instead of Mounted)
+  // Use 'created' because no need to access the elements (instead of Mounted)
   created() {
     this.fetchData();
   },
@@ -44,7 +52,7 @@ export default {
 
       // getting spesifics data from api
       // note: 'datum' is singular from 'data' (plural)
-      this.pokemon = json.map((datum) => ({
+      this.pokemons = json.map((datum) => ({
         id: datum.id,
         name: datum.name,
         sprite: datum.sprites.other["official-artwork"].front_default,
@@ -56,44 +64,12 @@ export default {
 </script>
 
 <style scoped>
-img {
-  width: 100%;
-}
-
 .row {
   display: flex;
   justify-content: center;
 }
 
-.card {
-  border: 1px solid silver;
-  border-radius: 8px;
-  max-width: 200px;
-  margin: 0px 5px;
-  cursor: pointer;
-  box-shadow: 0px 1px 3px darkgrey;
-  transition: 0.2s;
-}
-
-.title,
-.content,
-.description {
-  padding: 16px;
-  text-transform: capitalize;
-  text-align: center;
-}
-
-.title,
-.content {
-  border-bottom: 1px solid silver;
-}
-
-.title {
-  font-size: 1.25em;
-}
-
-.card:hover {
-  transition: 0.2s;
-  box-shadow: 0px 1px 9px darkgrey;
+img {
+  width: 100%;
 }
 </style>
