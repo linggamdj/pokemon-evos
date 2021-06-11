@@ -1,64 +1,29 @@
 <template>
-  <div class="row">
-    <card
-      v-for="pokemon in pokemons"
-      :key="pokemon.id"
-      @click="fetchEvolutions(pokemon)"
-    >
-      <template v-slot:title>
-        {{ pokemon.name }}
-      </template>
+  <pokemon-cards
+    :pokemons="pokemons"
+    @chosen="fetchEvolutions"
+    :selectedId="selectedId"
+  />
 
-      <template v-slot:content>
-        <img :src="pokemon.sprite" alt="" />
-      </template>
-
-      <template v-slot:description>
-        <div v-for="type in pokemon.types" :key="type">
-          {{ type }}
-        </div>
-      </template>
-    </card>
-  </div>
-
-  <div class="row">
-    <card
-      v-for="pokemon in evolutions"
-      :key="pokemon.id"
-      @click="fetchEvolutions(pokemon)"
-    >
-      <template v-slot:title>
-        {{ pokemon.name }}
-      </template>
-
-      <template v-slot:content>
-        <img :src="pokemon.sprite" alt="" />
-      </template>
-
-      <template v-slot:description>
-        <div v-for="type in pokemon.types" :key="type">
-          {{ type }}
-        </div>
-      </template>
-    </card>
-  </div>
+  <pokemon-cards :pokemons="evolutions" />
 </template>
 
 <script>
-import Card from "./Card.vue";
+import PokemonCards from "./PokemonCards.vue";
 
 const api = "https://pokeapi.co/api/v2/pokemon";
 const IDS = [1, 4, 7];
 
 export default {
   components: {
-    Card,
+    PokemonCards,
   },
 
   data() {
     return {
       pokemons: [],
       evolutions: [],
+      selectedId: null,
     };
   },
 
@@ -71,6 +36,7 @@ export default {
   methods: {
     async fetchEvolutions(pokemon) {
       this.evolutions = await this.fetchData([pokemon.id + 1, pokemon.id + 2]);
+      this.selectedId = pokemon.id;
     },
 
     // async await
@@ -96,12 +62,4 @@ export default {
 </script>
 
 <style scoped>
-.row {
-  display: flex;
-  justify-content: center;
-}
-
-img {
-  width: 100%;
-}
 </style>
